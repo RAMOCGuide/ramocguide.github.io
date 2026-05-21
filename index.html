@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAM OC Гайд (Light) — KF560C30BBAK2-64 · Z890 · Core Ultra 7 265K</title>
+<style>
+:root {
+  --bg: #F5F4EF;
+  --bg2: #FFFFFF;
+  --bg3: #EEF0F5;
+  --bg4: #E4E7EF;
+  --border: #DDE1EA;
+  --border2: #C8CEDC;
+  --text: #111827;
+  --text2: #374151;
+  --text3: #6B7280;
+  --accent: #1D54C4;
+  --accent2: #1A44A8;
+  --green: #15803D;
+  --green-bg: rgba(21,128,61,0.08);
+  --green-border: rgba(21,128,61,0.22);
+  --yellow: #92400E;
+  --yellow-bg: rgba(146,64,14,0.08);
+  --yellow-border: rgba(146,64,14,0.22);
+  --red: #991B1B;
+  --red-bg: rgba(153,27,27,0.07);
+  --red-border: rgba(153,27,27,0.2);
+  --blue: #1E40AF;
+  --blue-bg: rgba(30,64,175,0.07);
+  --blue-border: rgba(30,64,175,0.2);
+  --teal: #0F766E;
+  --teal-bg: rgba(15,118,110,0.07);
+  --teal-border: rgba(15,118,110,0.2);
+  --mono: 'Courier New', Courier, monospace;
+  --radius: 8px;
+  --radius-lg: 12px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; font-size: 14px; line-height: 1.6; min-height: 100vh; }
+
+/* ── LAYOUT ── */
+.app { display: flex; height: 100vh; overflow: hidden; }
+.sidebar { width: 220px; min-width: 220px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; }
+.main { flex: 1; overflow-y: auto; padding: 28px 32px; }
+
+/* ── HEADER ── */
+.header { padding: 20px 16px 12px; border-bottom: 1px solid var(--border); }
+.header-title { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: var(--accent); text-transform: uppercase; margin-bottom: 4px; }
+.header-sub { font-size: 11px; color: var(--text3); line-height: 1.4; }
+
+/* ── NAV ── */
+.nav { padding: 8px 0; flex: 1; }
+.nav-group-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: var(--text3); text-transform: uppercase; padding: 12px 16px 4px; }
+.nav-item { display: flex; align-items: center; gap: 8px; padding: 7px 16px; cursor: pointer; color: var(--text2); font-size: 13px; border-left: 2px solid transparent; transition: all 0.15s; }
+.nav-item:hover { background: var(--bg3); color: var(--text); }
+.nav-item.active { background: var(--bg3); color: var(--accent); border-left-color: var(--accent); font-weight: 500; }
+.nav-icon { font-size: 15px; width: 18px; text-align: center; opacity: 0.7; }
+.nav-item.active .nav-icon { opacity: 1; }
+
+/* ── FOOTER SIDEBAR ── */
+.sidebar-footer { padding: 12px 16px; border-top: 1px solid var(--border); }
+.version-badge { display: inline-block; background: var(--bg4); border: 1px solid var(--border2); border-radius: 4px; padding: 3px 8px; font-size: 10px; font-weight: 600; color: var(--text3); font-family: var(--mono); }
+
+/* ── PAGE ── */
+.panel { display: none; }
+.panel.active { display: block; }
+.page-title { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.page-sub { font-size: 13px; color: var(--text2); margin-bottom: 24px; }
+.sources { font-size: 10px; color: var(--text3); font-style: italic; margin-top: 2px; }
+
+/* ── SECTIONS ── */
+h2 { font-size: 15px; font-weight: 600; color: var(--text); margin: 28px 0 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+h2:first-child { margin-top: 0; }
+h3 { font-size: 13px; font-weight: 600; color: var(--text2); margin: 18px 0 8px; text-transform: uppercase; letter-spacing: 0.06em; }
+h4 { font-size: 13px; font-weight: 600; color: var(--text); margin: 10px 0 4px; }
+p { font-size: 13px; color: var(--text2); margin: 4px 0; }
+ul { padding-left: 18px; margin: 6px 0; }
+li { font-size: 13px; color: var(--text2); margin: 3px 0; }
+strong { color: var(--text); font-weight: 600; }
+
+/* ── GRID ── */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 10px 0; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 10px 0; }
+.grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 10px 0; }
+
+/* ── STAT CARDS ── */
+.stat { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; text-align: center; }
+.stat-val { font-size: 20px; font-weight: 700; color: var(--accent); }
+.stat-lbl { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+/* ── CARDS ── */
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; margin: 8px 0; }
+.card-green { border-left: 3px solid var(--green); }
+.card-yellow { border-left: 3px solid var(--yellow); }
+.card-red { border-left: 3px solid var(--red); }
+.card-blue { border-left: 3px solid var(--blue); }
+.card-teal { border-left: 3px solid var(--teal); }
+.card h4 { margin-bottom: 6px; }
+
+/* ── ALERTS ── */
+.alert { border-radius: var(--radius); padding: 10px 14px; margin: 8px 0; font-size: 13px; }
+.alert-green { background: var(--green-bg); border: 1px solid var(--green-border); color: var(--green); }
+.alert-yellow { background: var(--yellow-bg); border: 1px solid var(--yellow-border); color: var(--yellow); }
+.alert-red { background: var(--red-bg); border: 1px solid var(--red-border); color: var(--red); }
+.alert-blue { background: var(--blue-bg); border: 1px solid var(--blue-border); color: var(--blue); }
+.alert-teal { background: var(--teal-bg); border: 1px solid var(--teal-border); color: var(--teal); }
+
+/* ── BIOS PATH ── */
+.bios-path { background: var(--bg3); border: 1px solid var(--border); border-left: 3px solid var(--accent2); border-radius: var(--radius); padding: 8px 12px; font-family: var(--mono); font-size: 12px; color: var(--text3); margin: 4px 0 12px; }
+.bios-path .highlight { color: var(--accent); font-weight: 600; }
+
+/* ── TABLES ── */
+.table-wrap { overflow-x: auto; margin: 8px 0; border-radius: var(--radius-lg); border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+thead tr { background: var(--bg3); }
+th { text-align: left; padding: 9px 12px; font-size: 11px; font-weight: 600; color: var(--text2); letter-spacing: 0.05em; text-transform: uppercase; border-bottom: 1px solid var(--border); white-space: nowrap; }
+td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--text2); }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: rgba(0,0,0,0.025); }
+.row-head { background: var(--bg3) !important; }
+.row-head td { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; padding: 6px 12px; }
+td.mono { font-family: var(--mono); font-size: 11px; color: var(--text); }
+td.v { font-weight: 600; color: var(--text); }
+td.vg { font-weight: 600; color: var(--green); }
+td.vb { font-weight: 600; color: var(--blue); }
+td.vy { font-weight: 600; color: var(--yellow); }
+td.vr { font-weight: 600; color: var(--red); }
+td.vt { font-weight: 600; color: var(--teal); }
+
+/* ── BADGES ── */
+.badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.badge-green { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.badge-yellow { background: var(--yellow-bg); color: var(--yellow); border: 1px solid var(--yellow-border); }
+.badge-red { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+.badge-blue { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); }
+.badge-teal { background: var(--teal-bg); color: var(--teal); border: 1px solid var(--teal-border); }
+
+/* ── STEPS ── */
+.steps { margin: 10px 0; }
+.step { display: flex; gap: 12px; align-items: flex-start; margin: 8px 0; }
+.step-num { min-width: 24px; height: 24px; background: var(--accent2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: white; flex-shrink: 0; margin-top: 1px; }
+.step-content { flex: 1; font-size: 13px; color: var(--text2); }
+.step-content strong { color: var(--text); }
+
+/* ── COMPARISON CARDS ── */
+.cmp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 12px 0; }
+.cmp-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px; }
+.cmp-card.featured { border-color: var(--green); box-shadow: 0 0 0 1px var(--green-border); }
+.cmp-title { font-size: 13px; font-weight: 600; margin-bottom: 10px; color: var(--text); }
+.cmp-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 12px; gap: 8px; }
+.cmp-row:last-child { border-bottom: none; }
+.cmp-key { color: var(--text3); flex-shrink: 0; }
+.cmp-val { color: var(--text2); text-align: right; }
+.cmp-val.good { color: var(--green); font-weight: 600; }
+
+/* ── VOLTAGE MAP ── */
+.volt-map { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+
+/* ── PROFILE SELECTOR ── */
+.profile-tabs { display: flex; gap: 8px; margin: 12px 0; flex-wrap: wrap; }
+.profile-tab { padding: 7px 16px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--bg3); color: var(--text2); cursor: pointer; font-size: 12px; font-weight: 500; transition: all 0.15s; }
+.profile-tab:hover { border-color: var(--border2); color: var(--text); }
+.profile-tab.active { background: var(--accent2); border-color: var(--accent); color: white; }
+
+/* ── TIMELINE / NGU ── */
+.perf-bar { background: var(--bg3); border-radius: 4px; height: 8px; margin-top: 4px; overflow: hidden; }
+.perf-fill { height: 100%; background: linear-gradient(90deg, var(--accent2), var(--teal)); border-radius: 4px; transition: width 0.6s ease; }
+
+/* ── SEARCH ── */
+.search-wrap { margin-bottom: 20px; }
+.search-input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 9px 14px 9px 36px; color: var(--text); font-size: 13px; outline: none; transition: border 0.15s; }
+.search-input:focus { border-color: var(--accent2); }
+.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: 14px; }
+.search-container { position: relative; }
+
+/* ── PRINT ── */
+.print-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 7px 14px; color: var(--text2); cursor: pointer; font-size: 12px; font-weight: 500; transition: all 0.15s; margin-bottom: 20px; }
+.print-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .app { flex-direction: column; height: auto; overflow: auto; }
+  .sidebar { width: 100%; min-width: 0; height: auto; flex-direction: row; overflow-x: auto; border-right: none; border-bottom: 1px solid var(--border); }
+  .header { display: none; }
+  .nav { display: flex; flex-direction: row; padding: 0; flex: none; }
+  .nav-group-label { display: none; }
+  .nav-item { padding: 12px 14px; white-space: nowrap; border-left: none; border-bottom: 2px solid transparent; }
+  .nav-item.active { border-bottom-color: var(--accent); border-left-color: transparent; }
+  .sidebar-footer { display: none; }
+  .main { padding: 20px 16px; }
+  .grid3, .grid4 { grid-template-columns: 1fr 1fr; }
+  .cmp-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .grid2, .grid3, .grid4 { grid-template-columns: 1fr; }
+}
+@media print {
+  .sidebar { display: none; }
+  .main { overflow: visible; padding: 20px; }
+  .panel { display: block !important; }
+  .page-title::before { content: "═══════════════════\A"; white-space: pre; }
+}
+
+/* ── LIGHT THEME OVERRIDES ── */
+.header { background: var(--bg2); }
+.bios-path { color: var(--accent); }
+.bios-path .highlight { color: var(--accent2); font-weight: 700; }
+.cmp-val.good { color: var(--green); }
+thead tr { background: var(--bg3); }
+.row-head td { color: var(--accent2); background: rgba(30,64,175,0.05); }
+.step-num { color: #fff; }
+.version-badge { color: var(--text3); }
+/* Ensure nav active item is visible on light bg */
+.nav-item.active { background: rgba(29,84,196,0.08); }
+/* table border */
+.table-wrap { box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ═══ SIDEBAR ═══ -->
+<nav class="sidebar">
+  <div class="header">
+    <div class="header-title">RAM OC Guide</div>
+    <div class="header-sub">KF560C30BBAK2-64<br>Z890 · Core Ultra 7 265K</div>
+  </div>
+  <div class="nav">
+    <div class="nav-group-label">Анализ</div>
+    <div class="nav-item active" onclick="showPanel('arch')"><span class="nav-icon">⚙</span>Архитектура</div>
+    <div class="nav-item" onclick="showPanel('die')"><span class="nav-icon">🔬</span>Die анализ</div>
+    <div class="nav-item" onclick="showPanel('volt')"><span class="nav-icon">⚡</span>Напрежения</div>
+
+    <div class="nav-group-label">Профили</div>
+    <div class="nav-item" onclick="showPanel('boost')"><span class="nav-icon">🚀</span>200S Boost</div>
+    <div class="nav-item" onclick="showPanel('xmp')"><span class="nav-icon">📋</span>XMP режими</div>
+    <div class="nav-item" onclick="showPanel('p1')"><span class="nav-icon">🟢</span>Профил 1</div>
+    <div class="nav-item" onclick="showPanel('p2')"><span class="nav-icon">🔵</span>Профил 2</div>
+    <div class="nav-item" onclick="showPanel('p3')"><span class="nav-icon">🟡</span>Профил 3A/B</div>
+
+    <div class="nav-group-label">BIOS</div>
+    <div class="nav-item" onclick="showPanel('bios')"><span class="nav-icon">🖥</span>Навигация</div>
+    <div class="nav-item" onclick="showPanel('ngu')"><span class="nav-icon">📡</span>NGU / D2D</div>
+
+    <div class="nav-group-label">Справка</div>
+    <div class="nav-item" onclick="showPanel('full')"><span class="nav-icon">📊</span>Пълна таблица</div>
+    <div class="nav-item" onclick="showPanel('stress')"><span class="nav-icon">🧪</span>Стрес тест</div>
+    <div class="nav-item" onclick="showPanel('diag')"><span class="nav-icon">🔧</span>Диагностика</div>
+    <div class="nav-item" onclick="showPanel('sources')"><span class="nav-icon">📚</span>Източници</div>
+  </div>
+  <div class="sidebar-footer">
+    <span class="version-badge">v2.0 · 2025-05</span>
+  </div>
+</nav>
+
+<!-- ═══ MAIN ═══ -->
+<main class="main">
+
+<!-- ═══════════════════════════════════ ARCH ═══════════════════════════════════ -->
+<div id="arch" class="panel active">
+  <div class="page-title">Arrow Lake архитектура</div>
+  <div class="page-sub">Защо е различна от всичко преди — tile дизайн, нови voltage домейни, IMC на SoC тайл</div>
+
+  <div class="alert alert-red">Разбирането на тази архитектура е задължително преди да пипате каквото и да е. Грешките идват от прилагане на Raptor Lake логика към tile-базиран дизайн.</div>
+
+  <div class="grid4">
+    <div class="stat"><div class="stat-val">3 тайла</div><div class="stat-lbl">Compute + SoC + Graphics</div></div>
+    <div class="stat"><div class="stat-val">TSMC N6</div><div class="stat-lbl">SoC тайл (IMC тук)</div></div>
+    <div class="stat"><div class="stat-val">D2D шина</div><div class="stat-lbl">Свързва тайловете</div></div>
+    <div class="stat"><div class="stat-val">NGU / NoC</div><div class="stat-lbl">Uncore мрежа, SoC</div></div>
+  </div>
+
+  <h2>Voltage домейни — пълна карта</h2>
+
+  <div class="card card-blue">
+    <h4>Memory Controller Voltage (VDD2) <span class="badge badge-blue">BIOS: Memory Controller Voltage</span></h4>
+    <p>Статичен 1.1V rail. Захранва <strong>цифровата DDR PHY физическа подсистема</strong> (DDRIO). Това НЕ е System Agent — напълно различен rail. В ASUS BIOS се казва "Memory Controller Voltage". Диапазон: 0.900–1.800V.</p>
+    <p class="sources">Източник: SkatterBencher Arrow Lake MemSS; Shamino "Storming the Gates" ROG Forum</p>
+  </div>
+
+  <div class="card card-blue">
+    <h4>CPU System Agent Voltage (VCCSA) <span class="badge badge-blue">BIOS: CPU System Agent Voltage</span></h4>
+    <p>Динамичен SVID rail. Захранва <strong>аналоговата DDRIO PHY, NGU (NoC) и SoC IP блокове</strong>. Споделен с NGU — по-високото от двете стойности печели. За NGU/D2D OC нужен 1.15–1.25V daily. 200S Boost автоматично вдига до 1.2V.</p>
+    <p class="sources">Източник: Shamino "Storming the Gates", OCN page 691, SkatterBencher #87</p>
+  </div>
+
+  <div class="card card-green">
+    <h4>VDDQTX (вътрешен, bypass mode) <span class="badge badge-green">Не пипайте при daily OC</span></h4>
+    <p>Аналогов LVR rail за TX сигнализиране от MC към DIMM слотовете. По default в <strong>bypass mode</strong>, синхронизиран с VDD2. Не го пипайте освен при екстремен OC.</p>
+  </div>
+
+  <div class="card card-green">
+    <h4>DRAM VDD / VDDQ <span class="badge badge-green">BIOS: DRAM VDD Voltage / DRAM VDDQ Voltage</span></h4>
+    <p>Захранват DRAM чиповете директно. Управляват се от <strong>PMIC регулатора на платката</strong>. При 1.4V+ е препоръчително да активирате "High DRAM Voltage Mode" — без него горната граница е само 1.435V.</p>
+    <p class="sources">Източник: OCN Arrow Lake thread page 691, community consensus за Z890</p>
+  </div>
+
+  <h2>Критична разлика от Raptor Lake</h2>
+  <div class="alert alert-yellow"><strong>Традиционният "CPU SA voltage" при Raptor Lake отговаряше на IMC.</strong> При Arrow Lake, Memory Controller Voltage (VDD2) и CPU System Agent (VCCSA) са два напълно различни rails. Объркването им е честа причина за нестабилност при Z890.</div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Параметър</th><th>Raptor Lake аналог</th><th>Arrow Lake BIOS</th><th>Функция</th><th>Safe daily диапазон</th></tr></thead>
+      <tbody>
+        <tr><td>Memory Controller</td><td>VCCSA</td><td class="mono">Memory Controller Voltage</td><td>VDD2 — DDR PHY digital</td><td class="vg">1.20–1.30V</td></tr>
+        <tr><td>System Agent</td><td>VCCSA (частично)</td><td class="mono">CPU System Agent Voltage</td><td>VCCSA — NGU, SoC, analog PHY</td><td class="vg">1.10–1.25V</td></tr>
+        <tr><td>DRAM Power</td><td>DRAM Voltage</td><td class="mono">DRAM VDD Voltage</td><td>DRAM chip VDD</td><td class="vg">1.35–1.45V daily</td></tr>
+        <tr><td>DRAM Data</td><td>DRAM Voltage</td><td class="mono">DRAM VDDQ Voltage</td><td>DRAM I/O voltage</td><td class="vy">1.35–1.40V (2×32 DR)</td></tr>
+        <tr><td>NGU/D2D Power</td><td>Няма аналог</td><td class="mono">CPU System Agent Voltage</td><td>VCCSA (споделен)</td><td class="vg">1.15–1.20V</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Tile архитектура и латентност</h2>
+  <div class="card card-yellow">
+    <h4>Защо Arrow Lake има по-висока памет латентност от Raptor Lake</h4>
+    <p>IMC живее на <strong>SoC тайла</strong> (TSMC N6), докато CPU ядрата са на отделен Compute тайл (Intel 20A). Комуникацията минава през <strong>D2D (Die-to-Die) шина</strong>, която добавя ~10–15 ns структурна латентност. Тя е <strong>неизбежна и не е грешка</strong> в настройките.</p>
+    <p style="margin-top:6px">Очаквайте AIDA64 ~68–88 ns при Gear 2 + DDR5-6000 — нормално за платформата.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ DIE ═══════════════════════════════════ -->
+<div id="die" class="panel">
+  <div class="page-title">Hynix A-die анализ</div>
+  <div class="page-sub">KF560C30BBAK2-64 — 2×32GB 2Rx8 · 16Gb A-die · FBGA 16 компоненти/DIMM</div>
+
+  <div class="grid3">
+    <div class="stat"><div class="stat-val">Hynix A-die</div><div class="stat-lbl">BB суфикс идентификатор</div></div>
+    <div class="stat"><div class="stat-val">2Rx8</div><div class="stat-lbl">Dual rank, ×8 организация</div></div>
+    <div class="stat"><div class="stat-val">4 total ranks</div><div class="stat-lbl">2 DIMM × 2 ranks = тежко за IMC</div></div>
+  </div>
+
+  <h2>XMP профили (от официалния Kingston datasheet)</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Профил</th><th>Честота</th><th>Timings</th><th>Voltage</th><th>Забележка</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge badge-blue">XMP #1</span></td><td class="vg">DDR5-6000</td><td class="mono">CL30-36-36</td><td class="vg">1.40V</td><td>Основен OC профил</td></tr>
+        <tr><td><span class="badge badge-green">XMP #2</span></td><td>DDR5-5600</td><td class="mono">CL40-40-40</td><td>1.25V</td><td>Ниско напрежение fallback</td></tr>
+        <tr><td>XMP #3</td><td>DDR5-4800</td><td class="mono">CL38-38-38</td><td>1.10V</td><td>Near-JEDEC</td></tr>
+        <tr><td>JEDEC</td><td>DDR5-4800</td><td class="mono">CL40-39-39</td><td>1.10V</td><td>Default без XMP</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Die идентификация: A-die vs M-die</h2>
+  <div class="card card-yellow">
+    <h4>Практически тест чрез tRFC поведение</h4>
+    <p>Намалявайте tRFC при DDR5-6000 постепенно. <strong>Hynix A-die няма да boot или ще crash при тRFC под ~420–450ns.</strong> Hynix M-die понася значително по-ниски стойности (под 350ns). Твоите "BB" модули с BB суфикс = A-die.</p>
+    <p class="sources">Източник: OCN Hynix DDR5 guide; "Arrow lake 245K and 265K ram tuning" OCN thread</p>
+  </div>
+
+  <h2>OC ceiling при 2×32GB Hynix A-die (community данни)</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Честота</th><th>Постижимост</th><th>Условия</th><th>Community данни</th></tr></thead>
+      <tbody>
+        <tr><td class="vg">DDR5-6000 CL30</td><td><span class="badge badge-green">Тривиално</span></td><td>1.40V, XMP профил</td><td>Всички sample-и</td></tr>
+        <tr><td class="vg">DDR5-6400 CL30–32</td><td><span class="badge badge-green">Лесно</span></td><td>1.40–1.43V</td><td>Потвърдено широко</td></tr>
+        <tr><td class="vb">DDR5-6800 CL32–34</td><td><span class="badge badge-blue">Постижимо</span></td><td>1.42–1.45V</td><td>"Walk in the park" — OCN user с 2×32 A-die</td></tr>
+        <tr><td class="vy">DDR5-7200 CL34</td><td><span class="badge badge-yellow">Трудно</span></td><td>1.45V+, добра платка</td><td>Board tuning и Intel-MRC "не са подходящи за тази плътност"</td></tr>
+        <tr><td class="vr">DDR5-7600+</td><td><span class="badge badge-red">Екстремно</span></td><td>Перфектна IMC sample</td><td>Само top-tier OC платки (не TUF)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="sources">Източник: OCN Arrow Lake thread pages 511, 515; "Arrow lake 245k and 265k ram tuning" OCN thread; HardForum CUDIMMs thread</p>
+
+  <h2>Специфика при 2×32GB: реален потребителски доклад</h2>
+  <div class="card card-red">
+    <h4>Критична находка — OCN потребител с точно 2×32Gb A-die на Z890</h4>
+    <p>Докладва: <strong>VDD &gt;1.40V → системата не boot-ва</strong>; VDDQ &gt;1.35V → нестабилност при 6800+. Оптималното при push: VDD=1.40V, VDDQ=1.35V.</p>
+    <p style="margin-top:6px">При DDR5-6000 CL30 (твоят XMP профил): VDD и VDDQ 1.40V са перфектни и напълно безопасни.</p>
+    <p class="sources">Източник: OCN Arrow Lake thread page 511</p>
+  </div>
+
+  <h2>tRFC минимуми за 32GB A-die модули</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Честота</th><th>tRFC safe daily</th><th>tRFC абсолютен min</th><th>Забележка</th></tr></thead>
+      <tbody>
+        <tr><td>DDR5-6000</td><td class="vg">490–510 ns</td><td class="vy">460 ns</td><td>Buildzoid: 500 ns точно</td></tr>
+        <tr><td>DDR5-6400</td><td class="vg">510–530 ns</td><td class="vy">480 ns</td><td></td></tr>
+        <tr><td>DDR5-6800</td><td class="vg">530–560 ns</td><td class="vy">500 ns</td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="alert alert-red">При A-die 32GB модули НИКОГА не слизайте под 450 ns tRFC. Риск от data integrity проблеми. M-die понася много по-ниски стойности.</div>
+</div>
+
+<!-- ═══════════════════════════════════ VOLT ═══════════════════════════════════ -->
+<div id="volt" class="panel">
+  <div class="page-title">Напрежения — пълно ръководство</div>
+  <div class="page-sub">Voltage topology на Arrow Lake и безопасни стойности за daily use</div>
+
+  <div class="alert alert-red">Грешните напрежения са основната причина за нестабилност при Arrow Lake. Memory Controller Voltage (VDD2) и System Agent (VCCSA) са РАЗЛИЧНИ rails — не ги бъркайте!</div>
+
+  <h2>Основна voltage справка</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Напрежение</th><th>BIOS път</th><th>Точно BIOS наименование</th><th>Профил 1</th><th>Профил 2</th><th>Профил 3</th><th>Max daily</th></tr></thead>
+      <tbody>
+        <tr class="row-head"><td colspan="7">DRAM rails (контролирани от PMIC на платката)</td></tr>
+        <tr><td><strong>DRAM VDD</strong></td><td class="mono">AI Tweaker → Voltages</td><td class="mono">DRAM VDD Voltage</td><td class="vg">Auto (1.40V)</td><td class="vg">1.40V</td><td class="vy">1.40–1.43V</td><td class="vy">1.45V</td></tr>
+        <tr><td><strong>DRAM VDDQ</strong></td><td class="mono">AI Tweaker → Voltages</td><td class="mono">DRAM VDDQ Voltage</td><td class="vg">Auto (1.40V)</td><td class="vg">1.40V</td><td class="vy">1.35–1.40V ⚠</td><td class="vy">1.40V</td></tr>
+        <tr><td><strong>DRAM VPP</strong></td><td class="mono">AI Tweaker → Voltages</td><td class="mono">DRAM VPP Voltage</td><td class="vg">Auto (1.8V)</td><td class="vg">Auto</td><td class="vg">Auto</td><td class="v">Не пипайте</td></tr>
+        <tr class="row-head"><td colspan="7">CPU rails (на процесора)</td></tr>
+        <tr><td><strong>MC Voltage (VDD2)</strong></td><td class="mono">AI Tweaker → Voltages</td><td class="mono">Memory Controller Voltage</td><td class="vg">Auto</td><td class="vg">1.20V</td><td class="vy">1.25–1.30V</td><td class="vy">1.35V</td></tr>
+        <tr><td><strong>VCCSA</strong></td><td class="mono">AI Tweaker → Voltages</td><td class="mono">CPU System Agent Voltage</td><td class="vg">Auto (~1.05V)</td><td class="vg">Auto (1.10V)</td><td class="vy">1.15–1.20V</td><td class="vy">1.30V</td></tr>
+        <tr class="row-head"><td colspan="7">Специален режим</td></tr>
+        <tr><td><strong>High DRAM V Mode</strong></td><td class="mono">AI Tweaker → Voltages</td><td class="mono">High DRAM Voltage Mode</td><td class="vg">Enabled</td><td class="vg">Enabled</td><td class="vg">Enabled</td><td class="vg">Enabled при ≥1.40V</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>High DRAM Voltage Mode — важна корекция</h2>
+  <div class="card card-yellow">
+    <h4>Трябва ли да го активирате?</h4>
+    <p><strong>Да, при ≥1.40V е препоръчително.</strong> Без него горната PMIC граница е 1.435V — само 35mV буфер при 1.40V XMP. С активирано High DRAM Voltage Mode (разширява до 2.07V), PMIC регулаторът работи по-комфортно дори при 1.40V. Не го активирайте само ако планирате ≤1.35V.</p>
+    <p class="sources">Източник: OCN Arrow Lake thread page 691, community consensus за Z890</p>
+  </div>
+
+  <div class="alert alert-yellow"><strong>VDDQ специфика за 2×32 A-die:</strong> Community докладва VDDQ &gt;1.35V причинява нестабилност при 6800+ MT/s. При DDR5-6000 CL30 — 1.40V е перфектно. При push към 6800 → ако имате issues, намалете VDDQ до 1.35V докато VDD остава 1.40V.</div>
+
+  <h2>200S Boost voltage reference</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Параметър</th><th>Default</th><th>200S Boost (автоматично)</th><th>Intel гаранция</th></tr></thead>
+      <tbody>
+        <tr><td>VCCSA</td><td>~1.05V auto</td><td class="vg">1.20V</td><td class="badge badge-green">✓ Покрита</td></tr>
+        <tr><td>DRAM VDD max</td><td>1.40V (XMP)</td><td class="vg">≤1.40V</td><td class="badge badge-green">✓ Покрита</td></tr>
+        <tr><td>DRAM VDDQ max</td><td>1.40V (XMP)</td><td class="vg">≤1.40V</td><td class="badge badge-green">✓ Покрита</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="sources">Източник: G.SKILL "Intel 200S Boost" article; MSI 200S Boost guide; Intel Gaming Access</p>
+</div>
+
+<!-- ═══════════════════════════════════ BOOST ═══════════════════════════════════ -->
+<div id="boost" class="panel">
+  <div class="page-title">Intel 200S Boost</div>
+  <div class="page-sub">Warranty-покрит OC профил · Наличен в BIOS 3012 · ~7% gaming gain</div>
+
+  <div class="alert alert-green"><strong>BIOS 3012 го включва.</strong> ASUS changelog за TUF GAMING Z890-PLUS WIFI потвърждава: "1. Added support for Intel 200S Boost. 2. Enhanced system performance." Потребител с 265K + TUF Z890-PLUS WIFI и BIOS 3012 докладва: работи rock solid.</div>
+
+  <h2>Какво прави 200S Boost</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Параметър</th><th>Default стойност</th><th>200S Boost стойност</th><th>Ефект</th></tr></thead>
+      <tbody>
+        <tr><td>NGU Ratio</td><td>26×</td><td class="vg">32× (~3200 MHz)</td><td>+23% NoC bandwidth</td></tr>
+        <tr><td>D2D Ratio</td><td>21×</td><td class="vg">32× (~3200 MHz)</td><td>+52% inter-tile BW</td></tr>
+        <tr><td>XMP профил</td><td>Auto (JEDEC)</td><td class="vg">XMP Profile 1 (6000 CL30)</td><td>Активиран автоматично</td></tr>
+        <tr><td>VCCSA</td><td>Auto (~1.05V)</td><td class="vg">1.20V</td><td>Стабилна при NGU/D2D 32×</td></tr>
+        <tr><td>Intel warranty</td><td>Стандартна</td><td class="vg">3-год. гаранция</td><td>Покрита OC</td></tr>
+        <tr><td>OC Mailbox</td><td>Отключен</td><td class="vr">Заключен</td><td>Не може manual OC след активиране</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="sources">Източник: SkatterBencher #87 (директно тества 265K с 200S Boost); MSI 200S Boost guide; Intel Gaming Access</p>
+
+  <h2>Ограничения — критично важно</h2>
+  <div class="card card-red">
+    <h4>200S Boost заключва OC Mailbox</h4>
+    <p>200S Boost заключва Overclocking Mailbox — никакви допълнителни manual OC в BIOS или OS след активиране. <strong>Или 200S Boost, или Manual OC — не двете едновременно!</strong></p>
+  </div>
+  <div class="card card-yellow">
+    <h4>1DPC изискване — ти отговаряш технически</h4>
+    <p>200S Boost е проектиран за 1 DIMM per channel с памет до DDR5-8000. Твоите 2×32GB = 1DPC (по 1 DIMM на канал). Технически отговаряш, но официалните тестове са с 2×16GB или 2×24GB. При 2×32GB dual rank може да е по-малко стабилно — тествайте.</p>
+    <p class="sources">Източник: G.SKILL article; Intel Gaming Access</p>
+  </div>
+
+  <h2>Как да активирате в BIOS 3012</h2>
+  <div class="bios-path">AI Tweaker → <span class="highlight">Intel 200S Boost → [Enabled]</span></div>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="step-content">Влезте в BIOS (DEL при POST) → <strong>F7</strong> за Advanced Mode</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-content">AI Tweaker → търсете <strong>"Intel 200S Boost"</strong> или "Performance Profile" → Enable</div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-content">Ако не се вижда → натиснете <strong>F5</strong> (Load Defaults) първо, после повторете</div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-content">Задайте ръчно <strong>High DRAM Voltage Mode → Enabled</strong></div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-content"><strong>F10 → Save &amp; Exit</strong></div></div>
+    <div class="step"><div class="step-num">6</div><div class="step-content">Проверете в HWiNFO64: NGU ~3200 MHz, D2D ~3200 MHz — трябва да съответстват</div></div>
+  </div>
+
+  <h2>Performance очаквания</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Тест</th><th>Gain vs default XMP I</th><th>Бележка</th></tr></thead>
+      <tbody>
+        <tr><td>Gaming avg FPS (1080p)</td><td class="vg">+5–9%</td><td>Tom's Hardware тест: ~7% средно</td></tr>
+        <tr><td>Memory bandwidth</td><td class="vg">+15–20%</td><td>От NGU/D2D ratio boost</td></tr>
+        <tr><td>AIDA64 latency</td><td class="vg">-8–12 ns</td><td>D2D+NGU ефект</td></tr>
+        <tr><td>Productivity (rendering)</td><td class="vg">+3–8%</td><td>Зависи от workload</td></tr>
+        <tr><td>Intel warranty</td><td class="vg">Запазена</td><td>3-годишна гаранция</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert alert-teal">200S Boost е <strong>Профил 0</strong> — препоръчвам да го пробвате преди всичко останало. Ако работи стабилно при твоя 265K sample → нямаш нужда от Manual OC.</div>
+</div>
+
+<!-- ═══════════════════════════════════ XMP ═══════════════════════════════════ -->
+<div id="xmp" class="panel">
+  <div class="page-title">XMP режими — сравнение</div>
+  <div class="page-sub">XMP I vs XMP II vs XMP Tweaked — разлики и кога да използвате кое</div>
+
+  <div class="cmp-grid">
+    <div class="cmp-card">
+      <div class="cmp-title">XMP I <span class="badge badge-blue">Текущо</span></div>
+      <div class="cmp-row"><span class="cmp-key">Timings</span><span class="cmp-val">CL/tRCD/tRP/tRAS от XMP</span></div>
+      <div class="cmp-row"><span class="cmp-key">Subtimings</span><span class="cmp-val good">ASUS Auto-оптимизирани</span></div>
+      <div class="cmp-row"><span class="cmp-key">BCLK</span><span class="cmp-val good">ASUS оптимизира</span></div>
+      <div class="cmp-row"><span class="cmp-key">Voltage</span><span class="cmp-val">1.40V (XMP spec)</span></div>
+      <div class="cmp-row"><span class="cmp-key">Стабилност</span><span class="cmp-val good">Отлична</span></div>
+      <div class="cmp-row"><span class="cmp-key">Gain vs baseline</span><span class="cmp-val">0% (baseline)</span></div>
+      <p style="margin-top:10px;font-size:12px;color:var(--text3)">Зарежда само primary timings (CL/tRCD/tRP/tRAS), ASUS оптимизира останалото. Най-добра съвместимост.</p>
+    </div>
+    <div class="cmp-card">
+      <div class="cmp-title">XMP II</div>
+      <div class="cmp-row"><span class="cmp-key">Timings</span><span class="cmp-val">Пълен XMP профил буквално</span></div>
+      <div class="cmp-row"><span class="cmp-key">Subtimings</span><span class="cmp-val">Точно от XMP SPD</span></div>
+      <div class="cmp-row"><span class="cmp-key">BCLK</span><span class="cmp-val">Точно от XMP</span></div>
+      <div class="cmp-row"><span class="cmp-key">Voltage</span><span class="cmp-val">1.40V (точно от XMP)</span></div>
+      <div class="cmp-row"><span class="cmp-key">Стабилност</span><span class="cmp-val good">Много добра</span></div>
+      <div class="cmp-row"><span class="cmp-key">Gain vs XMP I</span><span class="cmp-val">±0–2%</span></div>
+      <p style="margin-top:10px;font-size:12px;color:var(--text3)">Зарежда всичко от XMP профила буквално. Може да е по-рестриктивен при subtimings.</p>
+    </div>
+    <div class="cmp-card featured">
+      <div class="cmp-title">XMP Tweaked <span class="badge badge-green">Препоръчан старт</span></div>
+      <div class="cmp-row"><span class="cmp-key">Timings</span><span class="cmp-val good">XMP + ASUS tweaks</span></div>
+      <div class="cmp-row"><span class="cmp-key">Subtimings</span><span class="cmp-val good">ASUS агресивно оптимизира</span></div>
+      <div class="cmp-row"><span class="cmp-key">BCLK</span><span class="cmp-val good">ASUS оптимизира</span></div>
+      <div class="cmp-row"><span class="cmp-key">Voltage</span><span class="cmp-val">1.40V + Auto fine-tune</span></div>
+      <div class="cmp-row"><span class="cmp-key">Стабилност</span><span class="cmp-val" style="color:var(--yellow)">Добра (тествайте)</span></div>
+      <div class="cmp-row"><span class="cmp-key">Gain vs XMP I</span><span class="cmp-val good">+3–8%</span></div>
+      <p style="margin-top:10px;font-size:12px;color:var(--text3)">Зарежда XMP и допълнително оптимизира subtimings ако конфигурацията съответства. Най-добра автоматична точка.</p>
+    </div>
+  </div>
+
+  <h2>Препоръчан ред на изпробване</h2>
+  <div class="steps">
+    <div class="step"><div class="step-num" style="background:var(--teal)">0</div><div class="step-content"><strong>200S Boost</strong> — 1 клик, гаранция, ~7% gaming. Пробвайте го ПЪРВО.</div></div>
+    <div class="step"><div class="step-num">1</div><div class="step-content"><strong>XMP Tweaked</strong> — ако 200S Boost е OK, за паралелно сравнение. Деактивирайте 200S Boost ако пробвате Manual.</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Manual Профил 2</strong> — оптимизирани subtimings при DDR5-6000, базирани на Buildzoid Hynix A-die sheet.</div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Manual Профил 3</strong> — push към 6400 MT/s или CL28.</div></div>
+  </div>
+
+  <div class="alert alert-yellow">XMP Tweaked не работи надеждно на всички платки и памети. Ако след XMP Tweaked системата boot-ва 3+ пъти с MemOK! → върнете на XMP I.</div>
+
+  <h2>Сравнителна performance таблица</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Режим</th><th>Bandwidth (est.)</th><th>AIDA64 Latency</th><th>Gaming FPS</th><th>Productivity</th></tr></thead>
+      <tbody>
+        <tr><td>XMP I (baseline)</td><td>~85 GB/s</td><td class="vy">~78–85 ns</td><td>0%</td><td>0%</td></tr>
+        <tr><td>XMP Tweaked</td><td class="vg">~88 GB/s</td><td class="vg">~74–80 ns</td><td class="vg">+2–4%</td><td class="vg">+2–4%</td></tr>
+        <tr><td>200S Boost</td><td class="vg">~92 GB/s</td><td class="vg">~68–75 ns</td><td class="vg">+5–9%</td><td class="vg">+4–7%</td></tr>
+        <tr><td>P2 (Manual 6000 CL30)</td><td class="vg">~90 GB/s</td><td class="vg">~70–76 ns</td><td class="vg">+3–6%</td><td class="vg">+4–7%</td></tr>
+        <tr><td>P3A (Manual 6400 CL30)</td><td class="vb">~97 GB/s</td><td class="vg">~65–72 ns</td><td class="vb">+5–8%</td><td class="vb">+6–10%</td></tr>
+        <tr><td>P3B (Manual 6000 CL28)</td><td class="vg">~90 GB/s</td><td class="vg">~67–73 ns</td><td class="vg">+4–6%</td><td class="vg">+5–8%</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ P1 ═══════════════════════════════════ -->
+<div id="p1" class="panel">
+  <div class="page-title">Профил 0 + 1 — Beginner Safe</div>
+  <div class="page-sub">Нулев до минимален риск · Един параметър · Максимална съвместимост</div>
+
+  <h2>Профил 0 — Intel 200S Boost <span class="badge badge-green">Препоръчан старт</span></h2>
+  <div class="alert alert-green">Един параметър. ~7% gaming gain. Intel 3-год. гаранция. Без риск.</div>
+  <div class="bios-path">AI Tweaker → <span class="highlight">Intel 200S Boost → [Enabled]</span></div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Настройка</th><th>Стойност (автоматична)</th><th>Описание</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">Intel 200S Boost</td><td class="vg">Enabled</td><td>Активира всичко автоматично</td></tr>
+        <tr><td class="mono">NGU Ratio (auto)</td><td class="vg">32× (~3200 MHz)</td><td>Потвърдете в HWiNFO64</td></tr>
+        <tr><td class="mono">CPU D2D Ratio (auto)</td><td class="vg">32× (~3200 MHz)</td><td>Потвърдете в HWiNFO64</td></tr>
+        <tr><td class="mono">VCCSA (auto)</td><td class="vg">1.20V</td><td>Intel spec — safe</td></tr>
+        <tr><td class="mono">XMP Profile (auto)</td><td class="vg">Profile 1 (DDR5-6000 CL30)</td><td>Автоматично</td></tr>
+        <tr><td class="mono">DRAM VDD/VDDQ (auto)</td><td class="vg">≤1.40V</td><td>Intel limit</td></tr>
+        <tr><td class="mono">High DRAM Voltage Mode</td><td class="vy">Задайте ръчно → Enabled</td><td>PMIC safety при 1.40V</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Профил 1 — XMP Tweaked</h2>
+  <div class="alert alert-blue">Ако искате сравнение или нямате нужда от 200S Boost lock. Деактивирайте 200S Boost преди да опитвате XMP Tweaked.</div>
+  <div class="bios-path">AI Tweaker → <span class="highlight">Ai Overclock Tuner → [XMP Tweaked]</span></div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Настройка</th><th>BIOS наименование</th><th>Стойност</th><th>Обяснение</th></tr></thead>
+      <tbody>
+        <tr><td>OC режим</td><td class="mono">Ai Overclock Tuner</td><td class="vg">XMP Tweaked</td><td>ASUS автооптимизира subtimings</td></tr>
+        <tr><td>SAGV</td><td class="mono">SAGV</td><td class="vb">Disabled</td><td>Постоянна честота, по-предсказуемо</td></tr>
+        <tr><td>DIMM Flex</td><td class="mono">DIMM Flex</td><td class="vb">Disabled</td><td>Не е нужно при фиксирани timings</td></tr>
+        <tr><td>Dynamic Memory Boost</td><td class="mono">Dynamic Memory Boost</td><td class="vb">Disabled</td><td>Може да причини instability</td></tr>
+        <tr><td>MCH Full Check</td><td class="mono">MCH Full Check</td><td class="vb">Disabled</td><td>Подобрява OC headroom</td></tr>
+        <tr><td>High DRAM V Mode</td><td class="mono">High DRAM Voltage Mode</td><td class="vg">Enabled</td><td>PMIC safety</td></tr>
+        <tr><td>DRAM VDD/VDDQ</td><td class="mono">DRAM VDD/VDDQ Voltage</td><td class="vg">Auto (1.40V)</td><td>От XMP профил</td></tr>
+        <tr><td>Memory Controller V</td><td class="mono">Memory Controller Voltage</td><td class="vg">Auto</td><td>BIOS управлява</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ P2 ═══════════════════════════════════ -->
+<div id="p2" class="panel">
+  <div class="page-title">Профил 2 — Optimized Daily DDR5-6000 CL30</div>
+  <div class="page-sub">Базиран на Buildzoid Hynix A-die timing sheet + Z890 community данни · Нисък риск · +5–10% vs XMP I</div>
+
+  <div class="alert alert-yellow">Деактивирайте 200S Boost преди да използвате Manual профили — те са несъвместими.</div>
+  <div class="bios-path">AI Tweaker → <span class="highlight">Ai Overclock Tuner → [Manual]</span></div>
+
+  <h2>Пълна конфигурация</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Параметър</th><th>BIOS наименование</th><th>Стойност</th><th>Обяснение / Източник</th></tr></thead>
+      <tbody>
+        <tr class="row-head"><td colspan="4">Основни</td></tr>
+        <tr><td>OC режим</td><td class="mono">Ai Overclock Tuner</td><td class="vb">Manual</td><td>Ръчен контрол</td></tr>
+        <tr><td>Честота</td><td class="mono">DRAM Frequency</td><td class="vg">DDR5-6000</td><td>Запазваме XMP честота</td></tr>
+        <tr><td>Gear режим</td><td class="mono">Memory Controller : DRAM Frequency Ratio</td><td class="vg">[1:2]</td><td>Gear 2 — задължително при 6000–7200</td></tr>
+
+        <tr class="row-head"><td colspan="4">Primary Timings — AI Tweaker → DRAM Timing Control</td></tr>
+        <tr><td>tCL</td><td class="mono">DRAM CAS# Latency</td><td class="vg">30</td><td>XMP стойност. DDR5: само четни!</td></tr>
+        <tr><td>tRCD (read)</td><td class="mono">DRAM RAS# to CAS# Delay Read</td><td class="vg">34</td><td>Тегнем от XMP 36 → 34</td></tr>
+        <tr><td>tRCD (write)</td><td class="mono">DRAM RAS# to CAS# Delay Write</td><td class="vg">34</td><td>Равно на tRCD read</td></tr>
+        <tr><td>tRP</td><td class="mono">DRAM RAS# PRE Time</td><td class="vg">34</td><td>Тегнем от XMP 36 → 34</td></tr>
+        <tr><td>tRAS</td><td class="mono">DRAM RAS# ACT Time</td><td class="vg">66</td><td>tCL+tRCD+2 = 64 min; 66 safe</td></tr>
+        <tr><td>Command Rate</td><td class="mono">DRAM Command Rate</td><td class="v">2N</td><td>ЗАДЪЛЖИТЕЛНО при 2×32GB dual rank</td></tr>
+
+        <tr class="row-head"><td colspan="4">Secondary Timings — Buildzoid Hynix A-die Official Sheet</td></tr>
+        <tr><td>tCWL</td><td class="mono">DRAM CAS Write Latency</td><td class="vg">28</td><td>tCL - 2 = 28</td></tr>
+        <tr><td>tRFC</td><td class="mono">DRAM REF Cycle Time</td><td class="vg">500</td><td>Buildzoid: точно 500 за Hynix A-die 6000</td></tr>
+        <tr><td>tRFCsb</td><td class="mono">DRAM REF Cycle Time Same Bank</td><td class="vg">Auto</td><td>Оставете Auto</td></tr>
+        <tr><td>tREFI</td><td class="mono">DRAM Refresh Interval</td><td class="vg">32767</td><td>Buildzoid: 50000 — но за 2×32 DR при добро охлаждане</td></tr>
+        <tr><td>tRRDL</td><td class="mono">DRAM RAS# to RAS# Delay L</td><td class="vg">8</td><td>Buildzoid: "some A-die sucks at tRRD_L" — не тегнете под 8!</td></tr>
+        <tr><td>tRRDS</td><td class="mono">DRAM RAS# to RAS# Delay S</td><td class="vg">4</td><td>Buildzoid</td></tr>
+        <tr><td>tWR</td><td class="mono">DRAM WRITE Recovery Time</td><td class="vg">48</td><td>Buildzoid: min 48, multiple of 6</td></tr>
+        <tr><td>tRTP</td><td class="mono">DRAM READ to PRE Time</td><td class="vg">12</td><td>Buildzoid: 12 (не 20!)</td></tr>
+        <tr><td>tFAW</td><td class="mono">DRAM FOUR ACT WIN Time</td><td class="vg">20</td><td>Buildzoid: 20 за ×8 организация (не 32!)</td></tr>
+        <tr><td>tWTR_L</td><td class="mono">DRAM WRITE to READ Delay L</td><td class="vg">16</td><td>Buildzoid: 16 (не 12!)</td></tr>
+        <tr><td>tWTR_S</td><td class="mono">DRAM WRITE to READ Delay S</td><td class="vg">6</td><td>Buildzoid: 6</td></tr>
+        <tr><td>tCCD_L_WR</td><td class="mono">DRAM Internal Write to Write Cmd Delay</td><td class="vg">Auto</td><td>Оставете Auto</td></tr>
+
+        <tr class="row-head"><td colspan="4">Tertiary Timings — AI Tweaker → DRAM Timing Control → Third Timings</td></tr>
+        <tr><td>tRDRD_sg</td><td class="mono">tRDRD_sg</td><td class="vg">4</td><td>Buildzoid: tRDRDSCL = 4</td></tr>
+        <tr><td>tRDRD_dg</td><td class="mono">tRDRD_dg</td><td class="vg">1</td><td><strong>КРИТИЧНО</strong> — Buildzoid: "tRDRDSC: 1"</td></tr>
+        <tr><td>tRDRD_dr</td><td class="mono">tRDRD_dr</td><td class="vy">Auto</td><td>Dual rank — оставете Auto</td></tr>
+        <tr><td>tRDRD_dd</td><td class="mono">tRDRD_dd</td><td class="vy">Auto</td><td>Multi DIMM — Auto</td></tr>
+        <tr><td>tWRWR_sg</td><td class="mono">tWRWR_sg</td><td class="vg">4</td><td>Buildzoid: 4</td></tr>
+        <tr><td>tWRWR_dg</td><td class="mono">tWRWR_dg</td><td class="vg">1</td><td>Buildzoid: 1</td></tr>
+        <tr><td>tWRWR_dr</td><td class="mono">tWRWR_dr</td><td class="vy">Auto</td><td>Dual rank</td></tr>
+        <tr><td>tWRWR_dd</td><td class="mono">tWRWR_dd</td><td class="vy">Auto</td><td>Multi DIMM</td></tr>
+        <tr><td>tWRRD</td><td class="mono">tWRRD</td><td class="vg">2</td><td>Buildzoid: 2</td></tr>
+        <tr><td>tRDWR</td><td class="mono">tRDWR</td><td class="vg">16</td><td>Buildzoid: 16</td></tr>
+
+        <tr class="row-head"><td colspan="4">Напрежения — AI Tweaker → Voltages</td></tr>
+        <tr><td>DRAM VDD</td><td class="mono">DRAM VDD Voltage</td><td class="vg">1.40V</td><td>XMP spec — optimal за A-die 6000</td></tr>
+        <tr><td>DRAM VDDQ</td><td class="mono">DRAM VDDQ Voltage</td><td class="vg">1.40V</td><td>= VDD при DDR5-6000</td></tr>
+        <tr><td>MC Voltage (VDD2)</td><td class="mono">Memory Controller Voltage</td><td class="vg">1.20V</td><td>DDR PHY digital rail</td></tr>
+        <tr><td>VCCSA</td><td class="mono">CPU System Agent Voltage</td><td class="vy">Auto</td><td>Без NGU/D2D OC → Auto е OK</td></tr>
+        <tr><td>High DRAM V Mode</td><td class="mono">High DRAM Voltage Mode</td><td class="vg">Enabled</td><td>PMIC safety при 1.40V</td></tr>
+
+        <tr class="row-head"><td colspan="4">Misc — AI Tweaker → DRAM Timing Control → Misc</td></tr>
+        <tr><td>MCH Full Check</td><td class="mono">MCH Full Check</td><td class="vb">Disabled</td><td>Подобрява OC headroom</td></tr>
+        <tr><td>SAGV</td><td class="mono">SAGV</td><td class="vb">Disabled</td><td>Постоянна честота</td></tr>
+        <tr><td>DIMM Flex</td><td class="mono">DIMM Flex</td><td class="vb">Disabled</td><td>Конфликт с manual OC</td></tr>
+        <tr><td>Dynamic Mem. Boost</td><td class="mono">Dynamic Memory Boost</td><td class="vb">Disabled</td><td>Само при stock</td></tr>
+        <tr><td>Fast Boot</td><td class="mono">Fast Boot</td><td class="vb">Disabled</td><td>Пълен POST при OC</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert alert-red"><strong>Корекции vs Гайд v1 (базирани на Buildzoid официален sheet):</strong> tRTP: 20→<strong>12</strong> | tFAW: 32→<strong>20</strong> | tWTR_L: 12→<strong>16</strong> | tRDRD_dg: липсваше→<strong>1</strong> | tWRRD: липсваше→<strong>2</strong> | tRDWR: липсваше→<strong>16</strong></div>
+</div>
+
+<!-- ═══════════════════════════════════ P3 ═══════════════════════════════════ -->
+<div id="p3" class="panel">
+  <div class="page-title">Профил 3A/B — Advanced Stable OC</div>
+  <div class="page-sub">3A: DDR5-6400 CL30 (bandwidth) · 3B: DDR5-6000 CL28 (latency)</div>
+
+  <div class="alert alert-red">Само при опитни потребители. Имайте достъп до CMOS reset. Деактивирайте 200S Boost преди!</div>
+
+  <div class="profile-tabs">
+    <button class="profile-tab active" onclick="switchP3('a')">3A — DDR5-6400 CL30</button>
+    <button class="profile-tab" onclick="switchP3('b')">3B — DDR5-6000 CL28</button>
+  </div>
+
+  <div id="p3a">
+    <h2>Профил 3A — DDR5-6400 CL30 <span class="badge badge-blue">По-висока bandwidth</span></h2>
+    <div class="alert alert-teal">При 2×32GB dual rank A-die на Z890: DDR5-6800 е post-вероятен, но DDR5-6400 е най-надеждната цел. Community потвърждава 6800 при множество A-die 2×32 sample-и.</div>
+    <div class="bios-path">AI Tweaker → <span class="highlight">Ai Overclock Tuner → [Manual] → DRAM Frequency → [DDR5-6400]</span></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Параметър</th><th>BIOS наименование</th><th>Стойност</th><th>vs Профил 2</th></tr></thead>
+        <tbody>
+          <tr class="row-head"><td colspan="4">Промени спрямо Профил 2</td></tr>
+          <tr><td>Честота</td><td class="mono">DRAM Frequency</td><td class="vb">DDR5-6400</td><td>+6.7%</td></tr>
+          <tr><td>tRCD/tRP</td><td class="mono">tRCD/tRP</td><td class="vg">36</td><td>Relaxed за 6400 stability</td></tr>
+          <tr><td>tRAS</td><td class="mono">DRAM RAS# ACT Time</td><td class="vg">70</td><td>tCL+tRCD+4</td></tr>
+          <tr><td>tRFC</td><td class="mono">DRAM REF Cycle Time</td><td class="vg">520</td><td>+20 за по-висока честота</td></tr>
+          <tr><td>tWR</td><td class="mono">DRAM WRITE Recovery Time</td><td class="vg">52</td><td>+4</td></tr>
+          <tr><td>tFAW</td><td class="mono">DRAM FOUR ACT WIN Time</td><td class="vg">24</td><td>+4</td></tr>
+          <tr class="row-head"><td colspan="4">Напрежения (промени)</td></tr>
+          <tr><td>DRAM VDD</td><td class="mono">DRAM VDD Voltage</td><td class="vy">1.40–1.43V</td><td>+0–0.03V</td></tr>
+          <tr><td>DRAM VDDQ</td><td class="mono">DRAM VDDQ Voltage</td><td class="vy">1.35–1.40V ⚠</td><td>Community: VDDQ &gt;1.35V може нестабилност при push</td></tr>
+          <tr><td>MC Voltage (VDD2)</td><td class="mono">Memory Controller Voltage</td><td class="vy">1.25V</td><td>+0.05V</td></tr>
+          <tr><td>VCCSA</td><td class="mono">CPU System Agent Voltage</td><td class="vy">1.15V</td><td>+0.05V</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="alert alert-blue">Всички останали настройки (tertiary timings, misc) — идентични с Профил 2.</div>
+  </div>
+
+  <div id="p3b" style="display:none">
+    <h2>Профил 3B — DDR5-6000 CL28 <span class="badge badge-yellow">По-ниска латентност</span></h2>
+    <div class="alert alert-yellow">При 2×32GB dual rank CL28 е по-трудно от 1Rx8 модули. Очаквайте нужда от 1.42–1.45V VDD. При Arrow Lake tile архитектура, CL28 дава само ~3–4 ns по-ниска AIDA латентност — обмислете дали си заслужава.</div>
+    <div class="bios-path">AI Tweaker → <span class="highlight">Ai Overclock Tuner → [Manual] → DRAM Frequency → [DDR5-6000] → tCL → [28]</span></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Параметър</th><th>BIOS наименование</th><th>Стойност</th><th>vs Профил 2</th></tr></thead>
+        <tbody>
+          <tr class="row-head"><td colspan="4">Промени спрямо Профил 2</td></tr>
+          <tr><td>tCL</td><td class="mono">DRAM CAS# Latency</td><td class="vb">28</td><td>-2 (само четни!)</td></tr>
+          <tr><td>tRAS</td><td class="mono">DRAM RAS# ACT Time</td><td class="vg">62</td><td>tCL+tRCD+0</td></tr>
+          <tr><td>tCWL</td><td class="mono">DRAM CAS Write Latency</td><td class="vg">26</td><td>tCL - 2 = 26</td></tr>
+          <tr class="row-head"><td colspan="4">Напрежения (промени)</td></tr>
+          <tr><td>DRAM VDD</td><td class="mono">DRAM VDD Voltage</td><td class="vy">1.42–1.45V</td><td>Нужен за CL28 stability</td></tr>
+          <tr><td>DRAM VDDQ</td><td class="mono">DRAM VDDQ Voltage</td><td class="vy">1.40V</td><td>Не надхвърляйте при DR</td></tr>
+          <tr><td>MC Voltage (VDD2)</td><td class="mono">Memory Controller Voltage</td><td class="vy">1.25V</td><td>+0.05V</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="alert alert-blue">Всички останали настройки — идентични с Профил 2.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ BIOS ═══════════════════════════════════ -->
+<div id="bios" class="panel">
+  <div class="page-title">BIOS навигация</div>
+  <div class="page-sub">Точна карта за ASUS TUF GAMING Z890-PLUS WIFI · Всички пътища за Advanced Mode</div>
+
+  <div class="alert alert-blue">Вход: <strong>DEL</strong> или <strong>F2</strong> при POST. Advanced Mode: <strong>F7</strong>. Запазване: <strong>F10</strong>. Load Defaults: <strong>F5</strong>.</div>
+
+  <h2>AI Tweaker — главно меню</h2>
+  <div class="bios-path"><span class="highlight">AI Tweaker</span> (главен таб)</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Настройка</th><th>Точно BIOS наименование</th><th>Стойност</th><th>Бележка</th></tr></thead>
+      <tbody>
+        <tr><td>200S Boost</td><td class="mono">Intel 200S Boost</td><td class="vg">Enable</td><td>Профил 0 — видим при правилен CPU</td></tr>
+        <tr><td>OC режим</td><td class="mono">Ai Overclock Tuner</td><td>XMP I / Tweaked / Manual</td><td>Основен превключвател</td></tr>
+        <tr><td>Честота</td><td class="mono">DRAM Frequency</td><td class="vg">DDR5-6000</td><td>Видим при Manual режим</td></tr>
+        <tr><td>Gear режим</td><td class="mono">Memory Controller : DRAM Frequency Ratio</td><td class="vg">[1:2] = Gear 2</td><td>ЗАДЪЛЖИТЕЛНО Gear 2</td></tr>
+        <tr><td>NGU ratio</td><td class="mono">NGU Ratio</td><td>Auto / 32×</td><td>Default 26×; 200S Boost → 32×</td></tr>
+        <tr><td>D2D ratio</td><td class="mono">CPU D2D Ratio</td><td>Auto / 32×</td><td>Default 21×; 200S Boost → 32×</td></tr>
+        <tr><td>MCE</td><td class="mono">ASUS MultiCore Enhancement</td><td>Auto</td><td>CPU performance</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>DRAM Timing Control</h2>
+  <div class="bios-path">AI Tweaker → <span class="highlight">DRAM Timing Control</span></div>
+
+  <h3>DIMM Fit — нова функция в по-нови BIOS</h3>
+  <div class="card card-teal">
+    <h4>Какво прави DIMM Fit и защо е важно</h4>
+    <p>DIMM Fit автоматично оптимизира сигналните параметри за 7–8 часа. <strong>Стартирайте го при стабилна честота преди да тегнете subtimings</strong> — значително подобрява stability margins. Запазете в Store0/Store1/Store2.</p>
+    <p>OCN user с Z890 Apex: "After dimm fit on 8933, 9000 was almost stable. It actually works and helps RAM OC very much."</p>
+  </div>
+  <div class="bios-path">AI Tweaker → DRAM Timing Control → <span class="highlight">DIMM Fit → Run → DIMM Fit Store → Store0</span></div>
+
+  <h3>Primary Timings</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Параметър</th><th>Точно BIOS наименование</th><th>XMP #1</th><th>Профил 2</th></tr></thead>
+      <tbody>
+        <tr><td>tCL</td><td class="mono">DRAM CAS# Latency</td><td>30</td><td class="vg">30</td></tr>
+        <tr><td>tRCD (read)</td><td class="mono">DRAM RAS# to CAS# Delay Read</td><td>36</td><td class="vg">34</td></tr>
+        <tr><td>tRCD (write)</td><td class="mono">DRAM RAS# to CAS# Delay Write</td><td>36</td><td class="vg">34</td></tr>
+        <tr><td>tRP</td><td class="mono">DRAM RAS# PRE Time</td><td>36</td><td class="vg">34</td></tr>
+        <tr><td>tRAS</td><td class="mono">DRAM RAS# ACT Time</td><td>Auto</td><td class="vg">66</td></tr>
+        <tr><td>CR</td><td class="mono">DRAM Command Rate</td><td>Auto</td><td class="v">2N</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Secondary Timings</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Параметър</th><th>Точно BIOS наименование</th><th>Стойност</th></tr></thead>
+      <tbody>
+        <tr><td>tCWL</td><td class="mono">DRAM CAS Write Latency</td><td class="vg">28</td></tr>
+        <tr><td>tRFC</td><td class="mono">DRAM REF Cycle Time</td><td class="vg">500</td></tr>
+        <tr><td>tRFCsb</td><td class="mono">DRAM REF Cycle Time Same Bank</td><td class="vg">Auto</td></tr>
+        <tr><td>tREFI</td><td class="mono">DRAM Refresh Interval</td><td class="vg">32767</td></tr>
+        <tr><td>tRRDL</td><td class="mono">DRAM RAS# to RAS# Delay L</td><td class="vg">8</td></tr>
+        <tr><td>tRRDS</td><td class="mono">DRAM RAS# to RAS# Delay S</td><td class="vg">4</td></tr>
+        <tr><td>tWR</td><td class="mono">DRAM WRITE Recovery Time</td><td class="vg">48</td></tr>
+        <tr><td>tRTP</td><td class="mono">DRAM READ to PRE Time</td><td class="vg">12</td></tr>
+        <tr><td>tFAW</td><td class="mono">DRAM FOUR ACT WIN Time</td><td class="vg">20</td></tr>
+        <tr><td>tWTR_L</td><td class="mono">DRAM WRITE to READ Delay L</td><td class="vg">16</td></tr>
+        <tr><td>tWTR_S</td><td class="mono">DRAM WRITE to READ Delay S</td><td class="vg">6</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Tertiary Timings</h3>
+  <div class="bios-path">AI Tweaker → DRAM Timing Control → <span class="highlight">Third Timings</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Параметър</th><th>BIOS наименование</th><th>Стойност</th><th>Бележка</th></tr></thead>
+      <tbody>
+        <tr><td>tRDRD_sg</td><td class="mono">tRDRD_sg</td><td class="vg">4</td><td>Buildzoid: tRDRDSCL</td></tr>
+        <tr><td>tRDRD_dg</td><td class="mono">tRDRD_dg</td><td class="vg">1</td><td><strong>КРИТИЧНО</strong> — Buildzoid: "tRDRDSC: 1"</td></tr>
+        <tr><td>tRDRD_dr</td><td class="mono">tRDRD_dr</td><td class="vy">Auto</td><td>Dual rank — Auto</td></tr>
+        <tr><td>tWRWR_sg</td><td class="mono">tWRWR_sg</td><td class="vg">4</td><td></td></tr>
+        <tr><td>tWRWR_dg</td><td class="mono">tWRWR_dg</td><td class="vg">1</td><td></td></tr>
+        <tr><td>tWRWR_dr</td><td class="mono">tWRWR_dr</td><td class="vy">Auto</td><td>Dual rank — Auto</td></tr>
+        <tr><td>tWRRD</td><td class="mono">tWRRD</td><td class="vg">2</td><td></td></tr>
+        <tr><td>tRDWR</td><td class="mono">tRDWR</td><td class="vg">16</td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Misc настройки</h3>
+  <div class="bios-path">AI Tweaker → DRAM Timing Control → <span class="highlight">Misc</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Настройка</th><th>BIOS наименование</th><th>Препоръка</th><th>Причина</th></tr></thead>
+      <tbody>
+        <tr><td>MCH Full Check</td><td class="mono">MCH Full Check</td><td class="vb">Disabled</td><td>Подобрява OC headroom</td></tr>
+        <tr><td>Fast Boot</td><td class="mono">Fast Boot</td><td class="vb">Disabled при OC</td><td>Пълен POST при OC</td></tr>
+        <tr><td>Training Profile</td><td class="mono">Training Profile</td><td class="v">Auto</td><td>Оставете Auto</td></tr>
+        <tr><td>SAGV</td><td class="mono">SAGV</td><td class="vb">Disabled</td><td>Постоянна честота</td></tr>
+        <tr><td>DIMM Flex</td><td class="mono">DIMM Flex</td><td class="vb">Disabled</td><td>Конфликт с manual OC</td></tr>
+        <tr><td>Dyn. Mem. Boost</td><td class="mono">Dynamic Memory Boost</td><td class="vb">Disabled</td><td>Само при stock</td></tr>
+        <tr><td>High DRAM V Mode</td><td class="mono">High DRAM Voltage Mode</td><td class="vg">Enabled при ≥1.40V</td><td>PMIC safety</td></tr>
+        <tr><td>DRAM CLK Period</td><td class="mono">DRAM CLK Period</td><td class="vy">Advanced опция</td><td>Тренира при по-ниска честота</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Напрежения</h3>
+  <div class="bios-path">AI Tweaker → <span class="highlight">Voltages (долу в секцията)</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Параметър</th><th>BIOS наименование</th><th>Диапазон</th><th>Safe daily</th></tr></thead>
+      <tbody>
+        <tr><td>DRAM VDD</td><td class="mono">DRAM VDD Voltage</td><td>1.10–2.07V (с H.D.V.Mode)</td><td class="vg">1.40–1.45V</td></tr>
+        <tr><td>DRAM VDDQ</td><td class="mono">DRAM VDDQ Voltage</td><td>1.10–2.07V</td><td class="vy">1.35–1.40V при DR push</td></tr>
+        <tr><td>MC Voltage (VDD2)</td><td class="mono">Memory Controller Voltage</td><td>0.900–1.800V</td><td class="vg">1.20–1.30V</td></tr>
+        <tr><td>VCCSA</td><td class="mono">CPU System Agent Voltage</td><td>Auto / Offset / Manual</td><td class="vg">1.10–1.25V</td></tr>
+        <tr><td>DRAM VPP</td><td class="mono">DRAM VPP Voltage</td><td>Не пипайте</td><td class="v">Auto (1.8V)</td></tr>
+        <tr><td>High DRAM V Mode</td><td class="mono">High DRAM Voltage Mode</td><td>Disabled / Enabled</td><td class="vg">Enabled при ≥1.40V</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ NGU ═══════════════════════════════════ -->
+<div id="ngu" class="panel">
+  <div class="page-title">NGU / D2D оптимизация</div>
+  <div class="page-sub">Специфична за Arrow Lake · Най-важният OC параметър · 2–20% gain</div>
+
+  <div class="alert alert-green"><strong>Това е най-важният Arrow Lake-специфичен OC.</strong> По-голямо влияние върху real-world performance от timing tightening. Tom's Hardware: "2–20% performance gain, depending on the workload."</div>
+
+  <h2>Default стойности и headroom</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Параметър</th><th>Default</th><th>200S Boost</th><th>Safe daily manual</th><th>Max без доп. voltage</th><th>BIOS наименование</th></tr></thead>
+      <tbody>
+        <tr><td>NGU Ratio</td><td>26×</td><td class="vg">32×</td><td class="vg">32–34×</td><td class="vy">34–35× (TUF board)</td><td class="mono">NGU Ratio</td></tr>
+        <tr><td>D2D Ratio</td><td>21×</td><td class="vg">32×</td><td class="vg">32–34×</td><td class="vy">34–35× (TUF board)</td><td class="mono">CPU D2D Ratio</td></tr>
+        <tr><td>VCCSA нужен</td><td>Auto (~1.05V)</td><td>1.20V</td><td>1.15–1.20V</td><td>1.20–1.25V</td><td class="mono">CPU System Agent Voltage</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="sources">Източник: Tom's Hardware Arrow Lake OC guide; SkatterBencher #87 (265K direct); Shamino "Storming the Gates" ASUS ROG Forum</p>
+
+  <h2>Как да настроите NGU/D2D ръчно (без 200S Boost)</h2>
+  <div class="bios-path">AI Tweaker → <span class="highlight">CPU System Agent Voltage → [Manual Mode] → 1.200V</span></div>
+  <div class="bios-path">AI Tweaker → <span class="highlight">NGU Ratio → 32</span></div>
+  <div class="bios-path">AI Tweaker → <span class="highlight">CPU D2D Ratio → 32</span></div>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="step-content">CPU System Agent Voltage → Manual Mode → <strong>1.200V</strong></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-content">NGU Ratio → <strong>32</strong></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-content">CPU D2D Ratio → <strong>32</strong></div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-content">F10 → Save. Потвърдете в HWiNFO64: NGU ~3200 MHz, D2D ~3200 MHz</div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-content">Prime95 Small FFT 30 мин за VCCSA stability тест</div></div>
+  </div>
+
+  <div class="alert alert-red"><strong>D2D НЕ може да е по-нисък от минималния ring ratio!</strong> Минималният ring ratio е 15×. Shamino: "D2D cannot be lower than min ring" — потвърдено.</div>
+
+  <h2>Очаквана AIDA64 латентност</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Конфигурация</th><th>NGU</th><th>D2D</th><th>AIDA64 Latency</th><th>Бележка</th></tr></thead>
+      <tbody>
+        <tr><td>XMP I, default</td><td>26×</td><td>21×</td><td class="vy">78–88 ns</td><td>Baseline за твоя setup</td></tr>
+        <tr><td>200S Boost</td><td class="vg">32×</td><td class="vg">32×</td><td class="vg">68–75 ns</td><td>~10 ns подобрение</td></tr>
+        <tr><td>Manual P2 + NGU/D2D 32×</td><td class="vg">32×</td><td class="vg">32×</td><td class="vg">65–72 ns</td><td>Tight timings допринасят</td></tr>
+        <tr><td>6400 CL30 + NGU/D2D 32×</td><td class="vg">32×</td><td class="vg">32×</td><td class="vg">63–70 ns</td><td>Combo ефект</td></tr>
+        <tr><td>Win10 vs Win11</td><td>—</td><td>—</td><td class="vy">Win11 ~5–10 ns по-бавен</td><td>OCN community finding</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="alert alert-blue">Arrow Lake tile архитектурата добавя структурна латентност от ~10–15 ns спрямо Raptor Lake. Тя е НЕИЗБЕЖНА и не е грешка в настройките. Не се тревожете за по-висока латентност от Raptor Lake при сравними настройки.</div>
+</div>
+
+<!-- ═══════════════════════════════════ FULL ═══════════════════════════════════ -->
+<div id="full" class="panel">
+  <div class="page-title">Пълна сравнителна таблица</div>
+  <div class="page-sub">Всички профили side-by-side · Верифицирани стойности</div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Параметър</th><th>P0 (200S Boost)</th><th>P1 (XMP Tweaked)</th><th>P2 (Daily 6000)</th><th>P3A (6400 CL30)</th><th>P3B (CL28 6000)</th></tr></thead>
+      <tbody>
+        <tr class="row-head"><td colspan="6">Основни</td></tr>
+        <tr><td>Режим</td><td>200S Boost</td><td>XMP Tweaked</td><td class="vb">Manual</td><td class="vb">Manual</td><td class="vb">Manual</td></tr>
+        <tr><td>Честота</td><td>6000 auto</td><td>6000</td><td class="vg">6000</td><td class="vb">6400</td><td class="vg">6000</td></tr>
+        <tr><td>Gear</td><td>2 auto</td><td>2</td><td class="vg">1:2</td><td class="vg">1:2</td><td class="vg">1:2</td></tr>
+        <tr><td>NGU Ratio</td><td class="vg">32× auto</td><td>26×</td><td>Auto/32×</td><td>Auto/32×</td><td>Auto/32×</td></tr>
+        <tr><td>D2D Ratio</td><td class="vg">32× auto</td><td>21×</td><td>Auto/32×</td><td>Auto/32×</td><td>Auto/32×</td></tr>
+        <tr class="row-head"><td colspan="6">Primary Timings</td></tr>
+        <tr><td>tCL</td><td>30 auto</td><td>30</td><td class="vg">30</td><td class="vg">30</td><td class="vb">28</td></tr>
+        <tr><td>tRCD</td><td>36 auto</td><td>ASUS opt</td><td class="vg">34</td><td class="vg">36</td><td class="vg">34</td></tr>
+        <tr><td>tRP</td><td>36 auto</td><td>ASUS opt</td><td class="vg">34</td><td class="vg">36</td><td class="vg">34</td></tr>
+        <tr><td>tRAS</td><td>auto</td><td>auto</td><td class="vg">66</td><td class="vg">70</td><td class="vg">62</td></tr>
+        <tr><td>Command Rate</td><td>auto</td><td>auto</td><td class="v">2N</td><td class="v">2N</td><td class="v">2N</td></tr>
+        <tr class="row-head"><td colspan="6">Secondary Timings (Buildzoid Hynix A-die sheet)</td></tr>
+        <tr><td>tCWL</td><td>auto</td><td>auto</td><td class="vg">28</td><td class="vg">28</td><td class="vg">26</td></tr>
+        <tr><td>tRFC</td><td>auto</td><td>auto</td><td class="vg">500</td><td class="vg">520</td><td class="vg">500</td></tr>
+        <tr><td>tREFI</td><td>auto</td><td>auto</td><td class="vg">32767</td><td class="vg">32767</td><td class="vg">32767</td></tr>
+        <tr><td>tRRDL</td><td>auto</td><td>auto</td><td class="vg">8</td><td class="vg">8</td><td class="vg">8</td></tr>
+        <tr><td>tRRDS</td><td>auto</td><td>auto</td><td class="vg">4</td><td class="vg">4</td><td class="vg">4</td></tr>
+        <tr><td>tWR</td><td>auto</td><td>auto</td><td class="vg">48</td><td class="vg">52</td><td class="vg">48</td></tr>
+        <tr><td>tRTP</td><td>auto</td><td>auto</td><td class="vg">12</td><td class="vg">12</td><td class="vg">12</td></tr>
+        <tr><td>tFAW</td><td>auto</td><td>auto</td><td class="vg">20</td><td class="vg">24</td><td class="vg">20</td></tr>
+        <tr><td>tWTR_L</td><td>auto</td><td>auto</td><td class="vg">16</td><td class="vg">16</td><td class="vg">16</td></tr>
+        <tr><td>tWTR_S</td><td>auto</td><td>auto</td><td class="vg">6</td><td class="vg">6</td><td class="vg">6</td></tr>
+        <tr class="row-head"><td colspan="6">Tertiary Timings</td></tr>
+        <tr><td>tRDRD_sg</td><td>auto</td><td>auto</td><td class="vg">4</td><td class="vg">4</td><td class="vg">4</td></tr>
+        <tr><td>tRDRD_dg</td><td>auto</td><td>auto</td><td class="vg">1</td><td class="vg">1</td><td class="vg">1</td></tr>
+        <tr><td>tRDRD_dr</td><td>auto</td><td>auto</td><td class="vy">Auto</td><td class="vy">Auto</td><td class="vy">Auto</td></tr>
+        <tr><td>tWRWR_sg</td><td>auto</td><td>auto</td><td class="vg">4</td><td class="vg">4</td><td class="vg">4</td></tr>
+        <tr><td>tWRWR_dg</td><td>auto</td><td>auto</td><td class="vg">1</td><td class="vg">1</td><td class="vg">1</td></tr>
+        <tr><td>tWRWR_dr</td><td>auto</td><td>auto</td><td class="vy">Auto</td><td class="vy">Auto</td><td class="vy">Auto</td></tr>
+        <tr><td>tWRRD</td><td>auto</td><td>auto</td><td class="vg">2</td><td class="vg">2</td><td class="vg">2</td></tr>
+        <tr><td>tRDWR</td><td>auto</td><td>auto</td><td class="vg">16</td><td class="vg">16</td><td class="vg">16</td></tr>
+        <tr class="row-head"><td colspan="6">Напрежения</td></tr>
+        <tr><td>DRAM VDD</td><td>≤1.40V auto</td><td>1.40V</td><td class="vg">1.40V</td><td class="vy">1.40–1.43V</td><td class="vy">1.42–1.45V</td></tr>
+        <tr><td>DRAM VDDQ</td><td>≤1.40V auto</td><td>1.40V</td><td class="vg">1.40V</td><td class="vy">1.35–1.40V</td><td class="vy">1.40V</td></tr>
+        <tr><td>MC Voltage (VDD2)</td><td>auto</td><td>auto</td><td class="vg">1.20V</td><td class="vy">1.25V</td><td class="vy">1.25V</td></tr>
+        <tr><td>VCCSA</td><td>1.20V auto</td><td>auto</td><td>Auto / 1.20V</td><td class="vy">1.15–1.20V</td><td class="vy">1.15–1.20V</td></tr>
+        <tr><td>High DRAM V Mode</td><td class="vg">Enabled</td><td class="vg">Enabled</td><td class="vg">Enabled</td><td class="vg">Enabled</td><td class="vg">Enabled</td></tr>
+        <tr class="row-head"><td colspan="6">Misc</td></tr>
+        <tr><td>MCH Full Check</td><td>auto</td><td>Disabled</td><td>Disabled</td><td>Disabled</td><td>Disabled</td></tr>
+        <tr><td>SAGV</td><td>auto</td><td>Disabled</td><td>Disabled</td><td>Disabled</td><td>Disabled</td></tr>
+        <tr><td>DIMM Flex</td><td>auto</td><td>Disabled</td><td>Disabled</td><td>Disabled</td><td>Disabled</td></tr>
+        <tr class="row-head"><td colspan="6">Performance (estimated)</td></tr>
+        <tr><td>Bandwidth</td><td class="vg">~90–92 GB/s</td><td class="vg">~88 GB/s</td><td class="vg">~90 GB/s</td><td class="vb">~97 GB/s</td><td class="vg">~90 GB/s</td></tr>
+        <tr><td>AIDA64 Latency</td><td class="vg">~68–75 ns</td><td class="vg">~74–80 ns</td><td class="vg">~68–74 ns</td><td class="vg">~63–70 ns</td><td class="vg">~67–73 ns</td></tr>
+        <tr><td>Gaming gain vs XMP I</td><td class="vg">+5–9%</td><td class="vg">+2–4%</td><td class="vg">+3–6%</td><td class="vb">+5–8%</td><td class="vg">+4–6%</td></tr>
+        <tr><td>Risk level</td><td><span class="badge badge-green">Минимален</span></td><td><span class="badge badge-green">Нисък</span></td><td><span class="badge badge-blue">Нисък</span></td><td><span class="badge badge-yellow">Умерен</span></td><td><span class="badge badge-yellow">Умерен-висок</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ STRESS ═══════════════════════════════════ -->
+<div id="stress" class="panel">
+  <div class="page-title">Стрес тест методология</div>
+  <div class="page-sub">Следвайте точно тази последователност · Никога не прескачайте стъпки</div>
+
+  <div class="alert alert-yellow">Видима стабилност ≠ истинска стабилност. Arrow Lake може да изглежда стабилен след warm reboot, но да fail-ва след студено стартиране.</div>
+
+  <h2>Инструменти</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Инструмент</th><th>Употреба</th><th>Минимум за "stable"</th><th>Бележка</th></tr></thead>
+      <tbody>
+        <tr><td><strong>HCI MemTest</strong></td><td>Бърза memory проверка</td><td class="vg">200% coverage</td><td>Стартирайте всички instances</td></tr>
+        <tr><td><strong>TM5 Anta777 Extreme</strong></td><td>Gold standard memory stress</td><td class="vg">2 пълни цикъла</td><td>Anta777 профил — най-агресивен</td></tr>
+        <tr><td><strong>y-cruncher 5b</strong></td><td>CPU + memory combo</td><td class="vg">1 пас без errors</td><td>Добър за IMC stability</td></tr>
+        <tr><td><strong>Prime95 Blend (no AVX)</strong></td><td>Смесено CPU+memory</td><td class="vg">1 час без errors</td><td>No AVX за чист memory тест</td></tr>
+        <tr><td><strong>AIDA64 Memory Benchmark</strong></td><td>Bandwidth/latency измерване</td><td>—</td><td>Само за measurement, не stress</td></tr>
+        <tr><td><strong>HWiNFO64</strong></td><td>Мониторинг</td><td>—</td><td>Оставете отворен по всяко време</td></tr>
+        <tr><td><strong>CPU-Z</strong></td><td>Потвърждение на timings</td><td>—</td><td>Проверете SPD tab и Memory tab</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Пълна тест последователност</h2>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="step-content"><strong>POST проверка</strong> — без MemOK! beeps. В CPU-Z → Memory tab: проверете честота, timings, voltage съответстват точно.</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-content"><strong>AIDA64 baseline</strong> — запишете bandwidth и latency за сравнение.</div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-content"><strong>HCI MemTest 200%</strong> — ~30–45 мин при 64GB. Fail → не продължавайте, диагностицирайте.</div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-content"><strong>TM5 Anta777 Extreme — 1 цикъл</strong> — Fail → диагностика. Pass → продължете.</div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-content"><strong>y-cruncher 5b — 15 мин</strong> — CPU+memory interaction тест.</div></div>
+    <div class="step"><div class="step-num">6</div><div class="step-content"><strong>TM5 Anta777 Extreme — 2 цикъла</strong> — Gold standard за daily stable.</div></div>
+    <div class="step"><div class="step-num">7</div><div class="step-content"><strong>Prime95 Blend (no AVX) — 1 час</strong> — Смесено натоварване.</div></div>
+    <div class="step"><div class="step-num">8</div><div class="step-content"><strong>Cold boot тест</strong> — Изключете PC от контакта за 5 мин, пуснете. Arrow Lake специфика!</div></div>
+    <div class="step"><div class="step-num">9</div><div class="step-content"><strong>24h daily use</strong> — Gaming, rendering без crash = финална одобрение.</div></div>
+  </div>
+
+  <h2>Температури</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Компонент</th><th>Зелено (safe)</th><th>Жълто (warning)</th><th>Червено (danger)</th></tr></thead>
+      <tbody>
+        <tr><td>DRAM температура</td><td class="vg">&lt;50°C</td><td class="vy">50–60°C</td><td class="vr">&gt;60°C</td></tr>
+        <tr><td>CPU Package (265K при OC)</td><td class="vg">&lt;85°C</td><td class="vy">85–95°C</td><td class="vr">&gt;100°C</td></tr>
+        <tr><td>VRM температура</td><td class="vg">&lt;70°C</td><td class="vy">70–85°C</td><td class="vr">&gt;85°C</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="alert alert-yellow">При DRAM &gt;55°C с tREFI=32767 → намалете до 16384. По-рядкото опресняване = по-горещо. При добро case airflow над DIMM слотовете — проблемът изчезва.</div>
+</div>
+
+<!-- ═══════════════════════════════════ DIAG ═══════════════════════════════════ -->
+<div id="diag" class="panel">
+  <div class="page-title">Диагностика и troubleshooting</div>
+  <div class="page-sub">Симптом → причина → решение · Забранени настройки</div>
+
+  <h2>Симптом → причина → решение</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Симптом</th><th>Вероятна причина</th><th>Решение</th></tr></thead>
+      <tbody>
+        <tr><td>POST fail / MemOK! loop</td><td>Честота или primary timings</td><td>+2 tRCD/tRP; или -200 честота</td></tr>
+        <tr><td>TM5 error Test #7–9</td><td>tRFC твърде нисък</td><td>tRFC +20–40</td></tr>
+        <tr><td>TM5 error Test #1–3</td><td>Primary timing или VDD</td><td>tRCD/tRP +2 или VDD +0.02V</td></tr>
+        <tr><td>Windows BSOD (0xC1/0x101)</td><td>MC Voltage или VCCSA</td><td>MC Voltage +0.02V; VCCSA +0.01V</td></tr>
+        <tr><td>Prime95 Blend fail само</td><td>MC Voltage недостатъчен</td><td>MC Voltage +0.02V (до 1.30V max)</td></tr>
+        <tr><td>200S Boost нестабилно</td><td>IMC sample quality</td><td>Disable 200S Boost → XMP I</td></tr>
+        <tr><td>6400 не boot-ва</td><td>tRFC или primaries</td><td>tRFC → 540; или tRCD/tRP → 38</td></tr>
+        <tr><td>VDDQ &gt;1.35V → нестабилност</td><td>A-die 2×32 специфика</td><td>VDDQ → 1.35V; VDD → 1.40V</td></tr>
+        <tr><td>Латентност &gt;80 ns</td><td>NGU/D2D на default</td><td>200S Boost или NGU/D2D manual 32×</td></tr>
+        <tr><td>Cold boot fail, warm OK</td><td>Arrow Lake известен issue</td><td>MC Voltage +0.02V; тест след пълно изключване</td></tr>
+        <tr><td>tRRDL &lt;8 → instability</td><td>Hynix A-die слабост</td><td>tRRDL минимум 8 — не тегнете!</td></tr>
+        <tr><td>System не boot с 200S Boost</td><td>BIOS версия или sample</td><td>Обновете BIOS; ако пак fail → XMP I</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Настройки, които НИКОГА не пипате</h2>
+  <div class="card card-red">
+    <ul>
+      <li><strong>tRFC под 450 ns</strong> при 32GB A-die — data integrity риск</li>
+      <li><strong>1N Command Rate</strong> при 2×32GB DR — практически гарантирана нестабилност</li>
+      <li><strong>Memory Controller Voltage над 1.35V</strong> за daily use</li>
+      <li><strong>VCCSA над 1.30V</strong> за daily use</li>
+      <li><strong>DRAM VDD над 1.50V</strong> за daily use</li>
+      <li><strong>D2D Ratio под Ring Ratio минимум (15×)</strong></li>
+      <li><strong>tRRDL под 8</strong> при Hynix A-die — специфична die слабост</li>
+      <li><strong>Gear 4 при DDR5 под 7600</strong> — наказателна латентност</li>
+      <li><strong>VNNAON над 1.0V</strong> за daily use</li>
+      <li><strong>200S Boost + Manual OC едновременно</strong> — несъвместими</li>
+    </ul>
+  </div>
+
+  <h2>DIMM Fit процедура</h2>
+  <div class="card card-teal">
+    <h4>Кога и как да използвате DIMM Fit</h4>
+    <p>Стартирайте DIMM Fit при стабилна честота преди timing tightening — оптимизира signal integrity за 7–8 часа. Ако планирате 6400 MT/s, първо постигнете стабилност на 6400, <em>после</em> пуснете DIMM Fit, <em>после</em> тегнете timings.</p>
+    <div class="bios-path" style="margin-top:8px">AI Tweaker → DRAM Timing Control → <span class="highlight">DIMM Fit → [Run] → DIMM Fit Store → [Store0]</span></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ SOURCES ═══════════════════════════════════ -->
+<div id="sources" class="panel">
+  <div class="page-title">Използвани източници</div>
+  <div class="page-sub">15+ community и официални източника · Верифицирани данни · Май 2025</div>
+
+  <h2>Официална документация</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Документ</th><th>Принос към гайда</th></tr></thead>
+      <tbody>
+        <tr><td>ASUS BIOS Manual EN (PRIME/PROART/TUF Intel 800)</td><td>Точни BIOS наименования, пътища, опции, voltage диапазони</td></tr>
+        <tr><td>ASUS BIOS Manual FR (PRIME/PROART/TUF Intel 800)</td><td>Кръстосана верификация на BIOS наименования</td></tr>
+        <tr><td>TUF GAMING Z890-PLUS WIFI User Manual</td><td>Спецификации, DIMM topology, слотове</td></tr>
+        <tr><td>Kingston KF560C30BBAK2-64 Official Datasheet</td><td>XMP профили (3 броя), JEDEC specs, FBGA конфигурация</td></tr>
+        <tr><td>ASUS TUF Z890-PLUS WIFI BIOS Changelog</td><td>Потвърждение на 200S Boost в конкретна BIOS версия</td></tr>
+        <tr><td>Intel Gaming Access — 200S Boost</td><td>1DPC limit, voltage constraints, compatible processors</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Community и технически източници</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Източник</th><th>URL / Автор</th><th>Принос</th></tr></thead>
+      <tbody>
+        <tr><td>SkatterBencher #87</td><td>skatterbencher.com</td><td>Core Ultra 7 265K OC guide, 200S Boost NGU/D2D settings, voltage topology</td></tr>
+        <tr><td>SkatterBencher Arrow Lake MemSS</td><td>skatterbencher.com (Pieter)</td><td>VDD2/VCCSA разграничение, Gear modes, DRAM CLK Period</td></tr>
+        <tr><td>Shamino "Storming the Gates"</td><td>ASUS ROG Forum (Shamino)</td><td>Arrow Lake voltage topology, VCCSA/VDD2 разграничение, NGU/D2D OC</td></tr>
+        <tr><td>OCN Arrow Lake thread</td><td>overclock.net (многобройни потребители)</td><td>Real user OC results, 2×32GB A-die specifics, voltage reports</td></tr>
+        <tr><td>OCN Arrow Lake Tuning Guide (Meta)</td><td>overclock.net</td><td>ARL OC предизвикателства, NGU/D2D/Ring баланс</td></tr>
+        <tr><td>OCN 265KF OC Settings thread</td><td>overclock.net</td><td>Real 265K user settings</td></tr>
+        <tr><td>Buildzoid Hynix DDR5 Timing Sheet</td><td>patreon.com/buildzoid (Buildzoid)</td><td>Официален Hynix A/M-die timing sheet за DDR5-6000</td></tr>
+        <tr><td>OCN Hynix DDR5 OC Guide</td><td>overclock.net</td><td>tRFC behavior, A-die vs M-die идентификация</td></tr>
+        <tr><td>OCN 245K/265K RAM tuning</td><td>overclock.net</td><td>200S Boost vs manual OC interaction, real Z890 results</td></tr>
+        <tr><td>ASUS ROG Forum 200S Boost thread</td><td>rog-forum.asus.com</td><td>BIOS 3012 stability reports, 265K specific findings</td></tr>
+        <tr><td>Tom's Hardware Arrow Lake OC</td><td>tomshardware.com</td><td>NGU/D2D gain 2–20%, gaming benchmarks, 200S Boost testing</td></tr>
+        <tr><td>G.SKILL "Intel 200S Boost" article</td><td>gskill.com</td><td>1DPC limit, voltage constraints, memory compatibility</td></tr>
+        <tr><td>flashmyboard.com TUF Z890-PLUS WIFI</td><td>flashmyboard.com</td><td>BIOS version history analysis, 200S Boost version tracking</td></tr>
+        <tr><td>Overclockers UK 285K thread</td><td>forums.overclockers.co.uk</td><td>VDD2/VCCSA naming, ASUS BIOS mapping</td></tr>
+        <tr><td>HardForum CUDIMMs Z890</td><td>hardforum.com</td><td>2×32GB dual rank Z890 real-world data</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert alert-blue" style="margin-top:16px">
+    <strong>Версия:</strong> v2.0 · Май 2025<br>
+    <strong>Конфигурация:</strong> ASUS TUF GAMING Z890-PLUS WIFI + Intel Core Ultra 7 265K + Kingston FURY Beast KF560C30BBAK2-64 (2×32GB DDR5-6000 CL30)<br>
+    <strong>BIOS:</strong> 3012<br>
+    <strong>Disclaimer:</strong> Всички OC настройки са на собствен риск. Верифицирайте стойностите с вашата конкретна IMC sample. Timings са базирани на Buildzoid official sheet + community данни.
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+const PANELS = ['arch','die','volt','boost','bios','xmp','p1','p2','p3','ngu','full','stress','diag','sources'];
+
+function activatePanel(id) {
+  if (!document.getElementById(id)) id = 'arch';
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-item[data-panel]').forEach(n => {
+    if (n.getAttribute('data-panel') === id) {
+      n.classList.add('active');
+      n.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  });
+  document.querySelector('.main').scrollTop = 0;
+}
+
+function showPanel(id) { location.hash = id; }
+
+function handleHash() {
+  const id = location.hash.replace('#','') || 'arch';
+  activatePanel(id);
+}
+
+window.addEventListener('hashchange', handleHash);
+window.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.nav-item').forEach(n => {
+    const oc = n.getAttribute('onclick') || '';
+    const m = oc.match(/'([^']+)'/);
+    if (m) {
+      const pid = m[1];
+      n.setAttribute('data-panel', pid);
+      n.removeAttribute('onclick');
+      const inner = n.innerHTML;
+      n.innerHTML = '';
+      const a = document.createElement('a');
+      a.href = '#' + pid;
+      a.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;color:inherit;text-decoration:none;padding:7px 16px;';
+      a.innerHTML = inner;
+      n.style.padding = '0';
+      n.appendChild(a);
+    }
+  });
+  handleHash();
+});
+
+function switchP3(variant) {
+  document.getElementById('p3a').style.display = variant === 'a' ? 'block' : 'none';
+  document.getElementById('p3b').style.display = variant === 'b' ? 'block' : 'none';
+  document.querySelectorAll('.profile-tab').forEach((t, i) => {
+    t.classList.toggle('active', (i===0&&variant==='a')||(i===1&&variant==='b'));
+  });
+}
+
+document.addEventListener('keydown', e => {
+  const current = PANELS.findIndex(p => document.getElementById(p)?.classList.contains('active'));
+  if (e.key === 'ArrowRight' && current < PANELS.length-1) showPanel(PANELS[current+1]);
+  if (e.key === 'ArrowLeft' && current > 0) showPanel(PANELS[current-1]);
+});
+</script>
+</body>
+</html>
