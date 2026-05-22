@@ -230,6 +230,30 @@ thead tr { background: var(--bg3); }
   gtag('js', new Date());
   gtag('config', 'G-72BL6T9RKD');
 </script>
+<script>
+document.addEventListener("scroll", function () {
+    let scrollTop = window.scrollY;
+    let docHeight = document.body.scrollHeight - window.innerHeight;
+    let scrollPercent = (scrollTop / docHeight) * 100;
+
+    if (scrollPercent > 25 && !window.scroll25) {
+        window.scroll25 = true;
+        gtag('event', 'scroll_depth', { 'percent': 25 });
+    }
+    if (scrollPercent > 50 && !window.scroll50) {
+        window.scroll50 = true;
+        gtag('event', 'scroll_depth', { 'percent': 50 });
+    }
+    if (scrollPercent > 75 && !window.scroll75) {
+        window.scroll75 = true;
+        gtag('event', 'scroll_depth', { 'percent': 75 });
+    }
+    if (scrollPercent > 99 && !window.scroll100) {
+        window.scroll100 = true;
+        gtag('event', 'scroll_depth', { 'percent': 100 });
+    }
+});
+</script>
 </head>
 <body>
 <div class="app">
